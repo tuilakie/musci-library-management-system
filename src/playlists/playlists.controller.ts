@@ -123,9 +123,9 @@ export class PlaylistsController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<BaseResponse<string>> {
+  async remove(@Param('id') id: string): Promise<BaseResponse<{ id: string }>> {
     const data = await this.playlistsService.remove(id);
-    const response: BaseResponse<string> = {
+    const response: BaseResponse<{ id: string }> = {
       success: true,
       message: 'Playlist removed successfully',
       data,

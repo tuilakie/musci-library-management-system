@@ -201,6 +201,13 @@ export class PlaylistsService {
   }
 
   remove(id: string) {
-    return `This action removes a #${id} playlist`;
+    return this.prisma.playlist.delete({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 }
