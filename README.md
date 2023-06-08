@@ -70,7 +70,7 @@ $ cd client/ && npm run dev
 
 | URL                   | Port | Description |
 | --------------------- | ---- | ----------- |
-| http://localhost:3000 | 3000 | Frontend    |
+| http://localhost:5173 | 5173 | Frontend    |
 | http://localhost:5000 | 5000 | Backend     |
 
 ## Useful links
