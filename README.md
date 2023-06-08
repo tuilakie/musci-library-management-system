@@ -61,7 +61,7 @@ $ npm run start dev
 # If you want start with watch mode
 $ npm run start:dev
 
-# for client development
+# for client development => open new terminal
 $ cd client/ && npm run dev
 
 ```
