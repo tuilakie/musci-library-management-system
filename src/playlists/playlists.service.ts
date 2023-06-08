@@ -8,7 +8,8 @@ import { Meta } from '@/common/base/base.response';
 @Injectable()
 export class PlaylistsService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createPlaylistDto: Omit<CreatePlaylistDto, 'tracks'>) {
+  create(createPlaylistDto: CreatePlaylistDto) {
+    console.log(createPlaylistDto);
     return this.prisma.playlist.create({
       data: createPlaylistDto,
     });
@@ -23,12 +24,22 @@ export class PlaylistsService {
     take: number;
   }) {
     const { title, artist, album, genre, skip, take } = queryParam;
+    console.log(queryParam);
     let data: Omit<Playlist, 'tracks'>[];
-    if (!title && !artist && !album && genre) {
+    let total: number;
+    if (!title && !artist && !album && !genre) {
       data = await this.prisma.playlist.findMany({
         skip,
         take,
+        include: {
+          _count: {
+            select: {
+              tracks: true,
+            },
+          },
+        },
       });
+      total = await this.prisma.playlist.count();
     } else {
       data = await this.prisma.playlist.findMany({
         where: {
@@ -73,43 +84,62 @@ export class PlaylistsService {
             },
           ],
         },
-        // include: {
-        //   tracks: {
-        //     where: {
-        //       OR: [
-        //         {
-        //           title: {
-        //             contains: title,
-        //             mode: 'insensitive',
-        //           },
-        //         },
-        //         {
-        //           artist: {
-        //             contains: artist,
-        //             mode: 'insensitive',
-        //           },
-        //         },
-        //         {
-        //           album: {
-        //             contains: album,
-        //             mode: 'insensitive',
-        //           },
-        //         },
-        //         {
-        //           genre: {
-        //             contains: genre,
-        //             mode: 'insensitive',
-        //           },
-        //         },
-        //       ],
-        //     },
-        //   },
-        // },
+        include: {
+          _count: {
+            select: {
+              tracks: true,
+            },
+          },
+        },
         skip,
         take,
       });
+      total = await this.prisma.playlist.count({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: title,
+                mode: 'insensitive',
+              },
+            },
+            {
+              tracks: {
+                some: {
+                  OR: [
+                    {
+                      title: {
+                        contains: title,
+                        mode: 'insensitive',
+                      },
+                    },
+                    {
+                      artist: {
+                        contains: artist,
+                        mode: 'insensitive',
+                      },
+                    },
+                    {
+                      album: {
+                        contains: album,
+                        mode: 'insensitive',
+                      },
+                    },
+                    {
+                      genre: {
+                        contains: genre,
+                        mode: 'insensitive',
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      });
     }
-    const total = await this.prisma.playlist.count();
+
     const pages = Math.ceil(total / take);
     const current = Math.ceil(skip / take) + 1;
     const size = data.length;
@@ -124,15 +154,18 @@ export class PlaylistsService {
     return { data, meta };
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.prisma.playlist.findUniqueOrThrow({
       where: {
         id,
       },
+      include: {
+        tracks: true,
+      },
     });
   }
 
-  update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
+  update(id: string, updatePlaylistDto: UpdatePlaylistDto) {
     return this.prisma.playlist.update({
       where: {
         id,
@@ -141,7 +174,7 @@ export class PlaylistsService {
     });
   }
 
-  addTrack(id: number, trackId: string[]) {
+  addTrack(id: string, trackId: string[]) {
     return this.prisma.playlist.update({
       where: {
         id,
@@ -154,7 +187,7 @@ export class PlaylistsService {
     });
   }
 
-  removeTrack(id: number, trackId: string[]) {
+  removeTrack(id: string, trackId: string[]) {
     return this.prisma.playlist.update({
       where: {
         id,
@@ -167,7 +200,7 @@ export class PlaylistsService {
     });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} playlist`;
   }
 }

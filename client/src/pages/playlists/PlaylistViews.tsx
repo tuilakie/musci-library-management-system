@@ -28,10 +28,10 @@ const columns = [
 const PlaylistViews = () => {
   const [skip, setSkip] = useState<number>(0);
   const [take, setTake] = useState<number>(10);
-  const [title, setTitle] = useState<string | undefined>('');
-  const [artist, setArtist] = useState<string | undefined>('');
-  const [album, setAlbum] = useState<string | undefined>('');
-  const [genre, setGenre] = useState<string | undefined>('');
+  const [title, setTitle] = useState<string | undefined>(undefined);
+  const [artist, setArtist] = useState<string | undefined>(undefined);
+  const [album, setAlbum] = useState<string | undefined>(undefined);
+  const [genre, setGenre] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -49,10 +49,10 @@ const PlaylistViews = () => {
 
   const handleSearch = () => {
     setSearch({
-      title,
-      artist,
-      album,
-      genre,
+      title: title || undefined,
+      artist: artist || undefined,
+      album: album || undefined,
+      genre: genre || undefined,
     });
   };
 
@@ -86,7 +86,7 @@ const PlaylistViews = () => {
       dataIndex: 'id',
       key: 'id',
       width: 300,
-      render: (id: number) => (
+      render: (id: string) => (
         <Space direction="horizontal">
           <Button
             icon={<RiEditCircleLine />}
@@ -108,7 +108,7 @@ const PlaylistViews = () => {
                 const playlist = dataSource?.find(
                   (item: any) => item.id === id,
                 );
-                dispatch(setSelectedPlaylist(playlist || null));
+                dispatch(setSelectedPlaylist(playlist as any));
               }}
             >
               Select

@@ -58,7 +58,7 @@ export const trackApi = baseApi.injectEndpoints({
         url: `track/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, arg) => [
+      invalidatesTags: (_result, _error, _arg) => [
         { type: 'Track', id: 'LIST' as const },
       ],
     }),

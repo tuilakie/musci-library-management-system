@@ -1,7 +1,7 @@
 import { Track } from '@/tracks/entities/track.entity';
 
 export class Playlist {
-  id: number;
+  id: string;
   name: string;
   description: string;
   tracks: Track[];

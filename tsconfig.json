@@ -22,4 +22,9 @@
     "noFallthroughCasesInSwitch": false
   },
   "exclude": ["node_modules", "dist", "client/**/*"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

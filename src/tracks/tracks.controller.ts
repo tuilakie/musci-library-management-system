@@ -36,26 +36,32 @@ export class TracksController {
   @Get('tracks')
   @ApiQuery({ name: 'title', type: 'string', required: false })
   @ApiQuery({ name: 'artist', type: 'string', required: false })
+  @ApiQuery({ name: 'album', type: 'string', required: false })
+  @ApiQuery({ name: 'genre', type: 'string', required: false })
+  // @ApiQuery({ name: 'skip', type: 'number', required: false })
+  // @ApiQuery({ name: 'take', type: 'number', required: false })
   async findAll(
     @Query('title') title?: string,
     @Query('artist') artist?: string,
     @Query('album') album?: string,
     @Query('genre') genre?: string,
-    @Query('skip') skip?: string,
-    @Query('take') take?: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
   ): Promise<BaseResponse<Track[]>> {
-    const data = await this.tracksService.findAll({
+    const { data, meta } = await this.tracksService.findAll({
       title,
       artist,
       album,
       genre,
-      skip: skip ? Number(skip) : 0,
-      take: take ? Number(take) : 10,
+      skip: skip || 0,
+      take: take || 10,
     });
+
     const response: BaseResponse<Track[]> = {
       success: true,
       message: 'Tracks retrieved successfully',
       data: data,
+      meta: meta,
     };
     return response;
   }

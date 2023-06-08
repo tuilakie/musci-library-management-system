@@ -13,9 +13,10 @@ export interface Meta {
 }
 
 export interface Playlist {
-  id: number;
+  id: string;
   name: string;
   description: string;
+  tracks: Track[];
 }
 
 export interface Track {

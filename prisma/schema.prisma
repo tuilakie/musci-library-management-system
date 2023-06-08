@@ -25,10 +25,11 @@ model Track {
 }
 
 model Playlist {
-  id          Int     @id @default(autoincrement())
+  id          String  @id @default(uuid())
   name        String
   description String
   tracks      Track[]
 
+  @@unique([name])
   @@map("playlists")
 }

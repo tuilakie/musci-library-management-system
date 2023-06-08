@@ -4,7 +4,7 @@ import { HttpResponse, Playlist } from './type.api';
 export const playlistApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getPlaylists: builder.query<
-      HttpResponse<Playlist[]>,
+      HttpResponse<Omit<Playlist, 'tracks'>[]>,
       {
         title?: string;
         artist?: string;
@@ -33,18 +33,22 @@ export const playlistApi = baseApi.injectEndpoints({
         return [{ type: 'Playlist', id: arg }];
       },
     }),
-    createPlaylist: builder.mutation({
+    createPlaylist: builder.mutation<
+      HttpResponse<Omit<Playlist, 'tracks'>>,
+      Omit<Playlist, 'id' | 'tracks'>
+    >({
       query: (body) => ({
         url: 'playlists',
         method: 'POST',
         body,
       }),
+      transformErrorResponse: (response) => response.data,
       invalidatesTags: [{ type: 'Playlist', id: 'LIST' }],
     }),
     updatePlaylist: builder.mutation({
       query: ({ id, ...body }) => ({
         url: `playlists/${id}`,
-        method: 'PUT',
+        method: 'PATCH',
         body,
       }),
       invalidatesTags: (_result, _error, arg) => [
@@ -84,7 +88,10 @@ export const playlistApi = baseApi.injectEndpoints({
         },
       }),
 
-      invalidatesTags: [{ type: 'Playlist', id: 'LIST' }],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Playlist', id: 'LIST' },
+        { type: 'Playlist', id: arg.playlistId },
+      ],
     }),
   }),
 });

@@ -22,7 +22,9 @@ async function bootstrap() {
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
-
+  app.enableCors({
+    origin: true,
+  });
   await app.listen(5000);
 }
 bootstrap();
